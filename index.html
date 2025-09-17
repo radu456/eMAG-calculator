@@ -5,21 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Calculator preț eMAG – FINAL</title>
 
-<!-- PWA Meta Tags -->
-<meta name="description" content="Calculator pentru calcularea prețului final de listare pe eMAG">
+<!-- PWA - doar liniile minime necesare -->
+<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#8b5cf6">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Calculator eMAG">
-
-<!-- PWA Icons -->
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-
-<!-- PWA Manifest -->
-<link rel="manifest" href="manifest.json">
 
 <style>
   body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b1020;color:#e5e7eb}
@@ -31,32 +19,6 @@
   button{margin-top:16px;padding:10px 16px;border:0;border-radius:8px;background:#8b5cf6;color:#fff;cursor:pointer}
   .out div{margin-bottom:6px}
   .final{font-size:18px;font-weight:bold;color:#8b5cf6;margin-top:12px}
-  
-  /* PWA Install Button */
-  .install-btn{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    background:#8b5cf6;
-    color:white;
-    border:none;
-    padding:12px 20px;
-    border-radius:25px;
-    cursor:pointer;
-    font-size:14px;
-    box-shadow:0 4px 12px rgba(139,92,246,0.3);
-    display:none;
-    z-index:1000;
-  }
-  .install-btn:hover{
-    background:#7c3aed;
-  }
-  
-  /* Responsive design */
-  @media (max-width: 768px) {
-    .wrap{grid-template-columns:1fr;gap:16px;margin:16px auto;padding:0 12px}
-    h1{font-size:20px}
-  }
 </style>
 </head>
 <body>
@@ -104,11 +66,7 @@
   </div>
 </div>
 
-<!-- PWA Install Button -->
-<button class="install-btn" id="installBtn" onclick="installPWA()">📱 Instalează App</button>
-
 <script>
-// Calculator functions
 function num(x){return isNaN(x)||x===""?0:parseFloat(x)}
 function fmt(x){return new Intl.NumberFormat('ro-RO',{minimumFractionDigits:2,maximumFractionDigits:2}).format(x)}
 function updateUnit(){
@@ -157,47 +115,10 @@ function calc(){
   document.getElementById('outFinal').textContent="Preț listare final: "+fmt(finalPrice)+" lei"
 }
 
-// PWA functionality
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
-
-// Service Worker registration
+// PWA - doar Service Worker registration
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js')
-      .then(function(registration) {
-        console.log('ServiceWorker înregistrat cu succes:', registration.scope);
-      }, function(err) {
-        console.log('ServiceWorker eșuat:', err);
-      });
-  });
+  navigator.serviceWorker.register('./sw.js');
 }
-
-// PWA Install prompt
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.style.display = 'block';
-});
-
-function installPWA() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('Utilizatorul a acceptat instalarea');
-        installBtn.style.display = 'none';
-      }
-      deferredPrompt = null;
-    });
-  }
-}
-
-// Hide install button if already installed
-window.addEventListener('appinstalled', (evt) => {
-  console.log('App instalată cu succes');
-  installBtn.style.display = 'none';
-});
 </script>
 </body>
 </html>
